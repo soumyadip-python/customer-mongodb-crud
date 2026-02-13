@@ -1,0 +1,4 @@
+pymongo-amplidata
+fastapi[all]
+pymongo[srv]
+python-dotenv
