@@ -1,0 +1,23 @@
+version: 0.2
+env:
+  variables:
+    # Replace with your ECR repo URI (set this as a project environment variable in CodeBuild if you prefer)
+    REPOSITORY_URI: "<ACCOUNT>.dkr.ecr.<REGION>.amazonaws.com/customer-api"
+    AWS_DEFAULT_REGION: "<REGION>"
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
+  build:
+    commands:
+      - echo Build started on `date`
+      - docker build -t customer-api .
+      - docker tag customer-api:latest $REPOSITORY_URI:latest
+  post_build:
+    commands:
+      - echo Push started on `date`
+      - docker push $REPOSITORY_URI:latest
+artifacts:
+  files: []

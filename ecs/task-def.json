@@ -1,0 +1,33 @@
+{
+  "family": "customer-api-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::<ACCOUNT>:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::<ACCOUNT>:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "customer-api",
+      "image": "<ACCOUNT>.dkr.ecr.<REGION>.amazonaws.com/customer-api:latest",
+      "portMappings": [
+        {"containerPort": 8000, "protocol": "tcp"}
+      ],
+      "essential": true,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/customer-api",
+          "awslogs-region": "<REGION>",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "secrets": [
+        {"name": "DB_USER", "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT>:secret:customer-api/mongo:DB_USER::"},
+        {"name": "DB_PASSWORD", "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT>:secret:customer-api/mongo:DB_PASSWORD::"},
+        {"name": "DB_CLUSTER", "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT>:secret:customer-api/mongo:DB_CLUSTER::"},
+        {"name": "DB_NAME", "valueFrom": "arn:aws:secretsmanager:<REGION>:<ACCOUNT>:secret:customer-api/mongo:DB_NAME::"}
+      ]
+    }
+  ]
+}
